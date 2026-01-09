@@ -1177,7 +1177,8 @@ class _Latex2Sympy:
                 expr = self.handle_ceil(arg)
             elif name == 'det':
                 expr = arg.det()
-            
+            elif name in ["Gamma", "gamma"]:
+                expr = sympy.gamma(arg)
             elif name in ["sin", "cos", "tan", "csc", "sec", "cot"]:
                 if func_pow == -1:
                     name = "a" + name

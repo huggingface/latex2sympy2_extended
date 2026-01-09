@@ -91,6 +91,7 @@ FUNC_TAN:  '\\tan';
 FUNC_CSC:  '\\csc';
 FUNC_SEC:  '\\sec';
 FUNC_COT:  '\\cot';
+FUNC_GAMMA: '\\Gamma' | '\\gamma';
 
 FUNC_ARCSIN: '\\arcsin';
 FUNC_ARCCOS: '\\arccos';
@@ -582,7 +583,8 @@ func_normal_functions_single_arg:
     | FUNC_SINH | FUNC_COSH | FUNC_TANH
     | FUNC_ARSINH | FUNC_ARCOSH | FUNC_ARTANH
     | FUNC_ARCSINH | FUNC_ARCCOSH | FUNC_ARCTANH
-    | FUNC_FLOOR | FUNC_CEIL | FUNC_DET;
+    | FUNC_FLOOR | FUNC_CEIL | FUNC_DET
+    | FUNC_GAMMA;
 
 func_normal_functions_multi_arg:
     FUNC_GCD | FUNC_LCM | FUNC_MAX | FUNC_MIN;

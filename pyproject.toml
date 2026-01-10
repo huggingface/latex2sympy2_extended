@@ -1,6 +1,6 @@
 [project]
 name = "latex2sympy2_extended"
-version = "1.10.2"
+version = "1.11.0"
 description = "Convert LaTeX math to SymPy expressions"
 readme = "README.md"
 requires-python = ">=3.10"

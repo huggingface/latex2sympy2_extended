@@ -208,14 +208,12 @@ to_replace_patterns = [
     ("infinity", r"infinity", r"\infty"),
     # Dots
     ("dot", r",?(\\ldots)", r" "),
-    # Support additional synonyms for percent used in model outputs
-    ("percentage", r"\s*percentage", r"\%"),
-    ("percentage_in_text", r"\\text{percentage}", r"\%"),
-    # It's important to have percent before percentage, as percentage is a substring of percent
-    ("percent", r"\s*percent", r"\%"),
-    ("percent_in_text", r"\\text{percent}", r"\%"),
-    ("pct", r"\s*pct", r"\%"),
-    ("pct_in_text", r"\\text{pct}", r"\%"),
+    ("percentage", r"\s*\bpercentage\b", r"%"),
+    ("percent", r"\s*\bpercent\b", r"%"),
+    ("pct", r"\s*\bpct\b", r"%"),
+    ("percent_in_text", r"\\text{percent}", r"%"),
+    ("pct_in_text", r"\\text{pct}", r"%"),
+    ("percentage_in_text", r"\\text{percentage}", r"%"),
     ("inf", r"((?<!\\)inf(?!inity))", r"\infty"),
     ("sqrt", r" sqrt", r"\sqrt"),
 ]
@@ -260,7 +258,7 @@ def replace(match):
 def replace_in_latex(text: str) -> str:
     return to_replace_regex.sub(replace, text)
 
-VALID_SEPARATOR_PATTERN = re.compile(r'and|or|,|;')
+VALID_SEPARATOR_PATTERN = re.compile(r'\b(and|or)\b|,|;')
 def extract_boxed_content(text: str, mode: Literal["last", "all"] = "last") -> str:
     """
     Find and extract all \\boxed{...} or \\fbox{...} elements from a string, searching from right to left.
@@ -345,7 +343,9 @@ def extract_boxed_content(text: str, mode: Literal["last", "all"] = "last") -> s
                 if not should_extract_boxed(text, content ,results[-1] if results else "", content_end, last_boxed_start):
                     break
             
-            results.append(content)
+            # Deduplicate consecutive identical results
+            if not results or results[-1] != content:
+                results.append(content)
             last_boxed_start = start_idx
             max_pos = start_idx
         else:

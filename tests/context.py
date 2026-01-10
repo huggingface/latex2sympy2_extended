@@ -16,7 +16,7 @@ def _Pow(a, b):
 def assert_equal(latex, expr, symbolically=False, variables: dict | None = None):
     parsed = latex2sympy(latex, variable_values=variables)
     if symbolically:
-        assert simplify(parsed - expr) == 0
+        assert simplify(parsed.doit() - expr) == 0
     else:
         actual_exp_tree = srepr(parsed)
         expected_exp_tree = srepr(expr)

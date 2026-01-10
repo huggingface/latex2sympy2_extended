@@ -1008,6 +1008,10 @@ class _Latex2Sympy:
             # return the symbol
             return symbol
 
+        elif atom.FUNC_GAMMA():
+            text = atom.FUNC_GAMMA().getText()
+            return get_symbol(text, self.is_real, self.config.lowercase_symbols)
+
         elif atom.PERCENT_NUMBER():
             text = atom.PERCENT_NUMBER().getText().replace("\\%", "").replace("%", "").replace(",", "")
             number = self.parse_number(text)

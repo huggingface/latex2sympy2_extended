@@ -560,7 +560,7 @@ atom_expr_no_supexpr: (LETTER_NO_E | GREEK_CMD | OTHER_SYMBOL_CMD | ACCENT) sube
 atom_expr: (LETTER_NO_E | GREEK_CMD | OTHER_SYMBOL_CMD | ACCENT) (supexpr subexpr | subexpr supexpr | subexpr | supexpr)?;
 atom_expr_list: (L_PAREN atom_expr (COMMA atom_expr)* R_PAREN) | atom_expr;
 number_subexpr: (NUMBER) subexpr?;
-atom: atom_expr | SYMBOL | number_subexpr | PERCENT_NUMBER | E_NOTATION | E_NOTATION_E | DIFFERENTIAL | VARIABLE;
+atom: atom_expr | SYMBOL | number_subexpr | PERCENT_NUMBER | E_NOTATION | E_NOTATION_E | DIFFERENTIAL | VARIABLE | FUNC_GAMMA;
 
 frac:
     CMD_FRAC L_BRACE

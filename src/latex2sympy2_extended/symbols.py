@@ -148,6 +148,7 @@ GREEK_LETTER_MAP = {
 
 sympy_singleton_map = {
     'pi': sympy.S.Pi,
+    'Gamma': sympy.EulerGamma,
 }
 
 def get_symbol(latex_str: str, is_real: bool | None = True, lowercase_symbols: bool = False):
@@ -159,6 +160,9 @@ def get_symbol(latex_str: str, is_real: bool | None = True, lowercase_symbols: b
     if letter.startswith('\\'):
         letter = letter[1:]
     
+    if letter in sympy_singleton_map:
+        return sympy_singleton_map[letter]
+
     if lowercase_symbols:
         letter = letter.lower()
 

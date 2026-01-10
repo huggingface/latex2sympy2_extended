@@ -76,7 +76,7 @@ def test_variable_dollars():
 
 
 def test_variable_percentage():
-    assert_equal("\\variable{x}\\%", Symbol('x') * Rational(1, 100))
+    assert_equal("\\variable{x}\\%", Symbol('x') * UnevaluatedExpr(Rational(1, 100)))
 
 
 def test_variable_single_arg_func():

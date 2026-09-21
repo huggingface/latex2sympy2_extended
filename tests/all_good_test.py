@@ -2,7 +2,7 @@ import pytest
 import sympy
 from latex2sympy2_extended import latex2sympy
 from sympy import (
-    E, I, FiniteSet, Function, oo, pi, sqrt, root, Symbol, Add, Mul, Pow, Abs, factorial, log, Eq, Ne, S,
+    E, I, FiniteSet, Function, oo, pi, sqrt, root, Symbol, Add, Mul, Pow, Abs, factorial, factorial2, log, Eq, Ne, S,
     Rational, Integer, UnevaluatedExpr, sin, cos, tan, sinh, cosh, tanh, asin, acos,
     atan, asinh, acosh, atanh, csc, sec, Sum, Product, Limit, Integral, Derivative,
     LessThan, StrictLessThan, GreaterThan, StrictGreaterThan, exp, binomial, Matrix,
@@ -32,6 +32,10 @@ def _Abs(a):
 
 def _factorial(a):
     return factorial(a, evaluate=False)
+
+
+def _factorial2(a):
+    return factorial2(a, evaluate=False)
 
 
 def _log(a, b):
@@ -186,6 +190,19 @@ class TestAllGood(object):
         ("(x!)!", _factorial(_factorial(x))),
         ("x!!!", _factorial(_factorial(_factorial(x)))),
         ("5!7!", _Mul(_factorial(5), _factorial(7))),
+        ("x!!", _factorial2(x)),
+        ("5!!", _factorial2(5)),
+        ("(2n-1)!!", _factorial2(_Add(_Mul(2, n), -1))),
+        ("(x!!)!!", _factorial2(_factorial2(x))),
+        ("(x!!)!", _factorial(_factorial2(x))),
+        ("x! !", _factorial(_factorial(x))),
+        (r"x!\,!", _factorial(_factorial(x))),
+        (r"x\!!!", _factorial2(x)),
+        ("x!! !", _factorial(_factorial2(x))),
+        ("x! !!", _factorial2(_factorial(x))),
+        ("x!!!!", _factorial(_factorial(_factorial(_factorial(x))))),
+        (r"\frac{2017!!}{2018!!}\cdot\frac{\pi}{2}",
+         Mul(_factorial2(2017), _Pow(_factorial2(2018), -1), pi, _Pow(2, -1), evaluate=False)),
         ("\\sqrt{x}", sqrt(x)),
         ("\\sqrt{x + b}", sqrt(_Add(x, b))),
         ("\\sqrt[3]{\\sin x}", root(sin(x), 3)),

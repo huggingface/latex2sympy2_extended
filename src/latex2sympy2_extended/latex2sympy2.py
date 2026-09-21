@@ -786,11 +786,25 @@ class _Latex2Sympy:
             exp_nested = postfix.exp_nofunc()
 
         exp = self.convert_exp(exp_nested)
-        for op in postfix.postfix_op():
+        ops = postfix.postfix_op()
+        index = 0
+        while index < len(ops):
+            op = ops[index]
+            index += 1
             if op.BANG():
                 if isinstance(exp, list):
                     raise Exception("Cannot apply postfix to derivative")
-                exp = sympy.factorial(exp, evaluate=False)
+                end = index
+                while (end < len(ops) and ops[end].BANG()
+                       and ops[end - 1].stop.stop + 1 == ops[end].start.start):
+                    end += 1
+                count = end - index + 1
+                if count == 2:
+                    exp = sympy.factorial2(exp, evaluate=False)
+                else:
+                    for _ in range(count):
+                        exp = sympy.factorial(exp, evaluate=False)
+                index = end
             elif op.eval_at():
                 ev = op.eval_at()
                 at_b = None

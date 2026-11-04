@@ -365,6 +365,22 @@ def extract_boxed_content(text: str, mode: Literal["last", "all"] = "last") -> s
         
     return ",".join(reversed(results))
 
+def _shorthand_atom(text: str) -> tuple[str, str] | None:
+    """One unbraced TeX argument.
+
+    A control word such as ``\\pi`` is one token. ``\\frac`` and ``\\sqrt``
+    stay a single character so a nested shorthand is left to its own pass.
+    """
+    text = text.lstrip()
+    if not text:
+        return None
+    if text[0] == "\\":
+        match = re.match(r"\\[a-zA-Z]+", text)
+        if match and match.group(0) not in (r"\frac", r"\sqrt"):
+            return match.group(0), text[match.end() :]
+    return text[0], text[1:]
+
+
 def _fix_fracs(text: str) -> str:
     """
     Fix the formatting of fractions in the given text.
@@ -394,23 +410,19 @@ def _fix_fracs(text: str) -> str:
             if len(substr) > 0 and substr[0] == "{":
                 new_str += substr
 
-            elif len(substr) < 2:
-                return text
             else:
-                a = substr[0]
-                b = substr[1]
-                if b != "{":
-                    if len(substr) > 2:
-                        post_substr = substr[2:]
-                        new_str += "{" + a + "}{" + b + "}" + post_substr
-                    else:
-                        new_str += "{" + a + "}{" + b + "}"
+                first = _shorthand_atom(substr)
+                if first is None:
+                    return text
+                a, rest = first
+                second = _shorthand_atom(rest)
+                if second is None:
+                    return text
+                b, post_substr = second
+                if b == "{":
+                    new_str += "{" + a + "}" + b + post_substr
                 else:
-                    if len(substr) > 2:
-                        post_substr = substr[2:]
-                        new_str += "{" + a + "}" + b + post_substr
-                    else:
-                        new_str += "{" + a + "}" + b
+                    new_str += "{" + a + "}{" + b + "}" + post_substr
     text = new_str
     return text
 
@@ -449,8 +461,12 @@ def _fix_sqrt(text: str) -> str:
     for split in splits[1:]:
         split = split.lstrip()
         if len(split) > 0 and split[0] not in ["{", "["]:
-            a = split[0]
-            new_substr = "\\sqrt{" + a + "}" + split[1:]
+            atom = _shorthand_atom(split)
+            if atom is None:
+                new_substr = "\\sqrt" + split
+            else:
+                a, rest = atom
+                new_substr = "\\sqrt{" + a + "}" + rest
         else:
             new_substr = "\\sqrt" + split
         new_string += new_substr

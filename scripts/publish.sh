@@ -11,6 +11,12 @@ clean_builds() {
     rm -rf dist/ build/ *.egg-info/
 }
 
+# Function to regenerate the parsers for every supported antlr runtime from PS.g4
+compile_parsers() {
+    echo "Compiling parsers..."
+    sh scripts/compile.sh
+}
+
 # Function to build package
 build_package() {
     echo "Building package..."
@@ -33,6 +39,7 @@ cd "$SCRIPT_DIR/.."
 
 # Execute the publishing process
 clean_builds
+compile_parsers
 build_package
 upload_to_pypi
 

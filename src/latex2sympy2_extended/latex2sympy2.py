@@ -1008,15 +1008,17 @@ class _Latex2Sympy:
             # return the symbol
             return symbol
 
-        elif atom.FUNC_GAMMA():
-            text = atom.FUNC_GAMMA().getText()
-            return get_symbol(text, self.is_real, self.config.lowercase_symbols)
-
         elif atom.PERCENT_NUMBER():
             text = atom.PERCENT_NUMBER().getText().replace("\\%", "").replace("%", "").replace(",", "")
             number = self.parse_number(text)
             percent = sympy.Mul(number, sympy.UnevaluatedExpr(sympy.Rational(1, 100)), evaluate=False)
             return percent
+
+        # FUNC_GAMMA is the newest alternative of `atom`. A parser generated from an older PS.g4
+        # has no FUNC_GAMMA accessor, so it is checked last.
+        elif atom.FUNC_GAMMA():
+            text = atom.FUNC_GAMMA().getText()
+            return get_symbol(text, self.is_real, self.config.lowercase_symbols)
     def parse_number(self, text):
         text = text.replace(",", "")
         # If it's made only of digits, remove the starting 0
